@@ -5,7 +5,7 @@ function renderGameJson() {
 	    {'publisher' : 'Ingenuity', 'avatar' : 'https://archive.org/services/img/msdos_Crosscountry_Canada_1991', 'subject' : 'Crosscountry Canada', 'body' : 'Drive an 18-wheel truck picking up and delivering a variety of commodities with typed-in commands.', 'date' : '1991', 'ifrmSrc' : 'https://archive.org/embed/msdos_Crosscountry_Canada_1991'},
 	]; 
 	// localStorage.removeItem("gameJson");
-	// localStorage.removeItem("trashList");
+	 //localStorage.removeItem("trashList");
 	if (typeof(Storage) != "undefined") {
 	   	if (!localStorage.gameJson) {
 	   		  localStorage.setItem("gameJson", JSON.stringify(games));
@@ -78,8 +78,11 @@ function renderHtml(from){
 			var lastSelectedGameListIndex = localStorage.selectedGameListIndex;	
 		} else {
 			localStorage.setItem("selectedGameListIndex", gamesArray.length);
-			var lastSelectedGameListIndex = gamesArray.length;
-		}	//console.log(gamesArray);
+			var lastSelectedGameListIndex = gamesArray.length - 1;
+		}	
+		if(lastSelectedGameListIndex < 0){
+			lastSelectedGameListIndex = 0;
+		}
 		if(gamesArray.length){
 			var listView = document.getElementById('list');
 			listView.innerHTML = '';
@@ -196,3 +199,19 @@ function deleteList(obj) {
 	}
 }
 
+function trashToInbox(){
+	if (localStorage.trashList) {
+   		var trashGames = JSON.parse(localStorage.trashList);
+	}
+	if(trashGames.length){
+		if (localStorage.gameJson) {
+	   		var games = JSON.parse(localStorage.gameJson).concat(trashGames);	   		
+		} else {
+			var games = trashGames;	
+		}	
+		localStorage.removeItem("trashList");
+		localStorage.removeItem("gameJson");
+	    localStorage.setItem("gameJson", JSON.stringify(games));
+	    renderHtml('inbox');
+	}
+}
